@@ -26,7 +26,7 @@ namespace ConsoleApplication1
             n = Convert.ToInt32(Console.ReadLine());
             Mes.Length = n;
             Mes.StartAddress = 0;
-            Mes.EndAddress = n;
+            Mes.EndAddress = n-1;
             Mes.Status = "未分配";
             Mes.Id = 1;
             Mes.WorkId = "";
@@ -116,12 +116,12 @@ namespace ConsoleApplication1
                     Nmes.EndAddress = LMes[m - 1].EndAddress;
 
                     //被占用
-                    LMes[m - 1].EndAddress = LMes[m - 1].StartAddress + Nmes.Length;
+                    LMes[m - 1].EndAddress = LMes[m - 1].StartAddress + Nmes.Length - 1;
                     LMes[m - 1].Status = "已分配";
                     LMes[m - 1].Length = Nmes.Length;
                     LMes[m - 1].WorkId = Nmes.WorkId;
 
-                    Nmes.Length = Nmes.EndAddress - Nmes.StartAddress;
+                    Nmes.Length = Nmes.EndAddress - Nmes.StartAddress + 1;
 
                     if (Nmes.Length == 0) return;
                     Nmes.Status = "未分配";
@@ -171,12 +171,12 @@ namespace ConsoleApplication1
                     Nmes.EndAddress = LMes[m - 1].EndAddress;
 
                     //被占用
-                    LMes[m - 1].EndAddress = LMes[m - 1].StartAddress + Nmes.Length;
+                    LMes[m - 1].EndAddress = LMes[m - 1].StartAddress + Nmes.Length - 1;
                     LMes[m - 1].Status = "已分配";
                     LMes[m - 1].Length = Nmes.Length;
                     LMes[m - 1].WorkId = Nmes.WorkId;
 
-                    Nmes.Length = Nmes.EndAddress - Nmes.StartAddress;
+                    Nmes.Length = Nmes.EndAddress - Nmes.StartAddress + 1;
 
                     if (Nmes.Length == 0) return;
                     Nmes.Status = "未分配";
@@ -210,14 +210,14 @@ namespace ConsoleApplication1
                 int num = LMes.Find(a => a.WorkId == number).Id;
                 var thing = LMes[num - 1];
 
-                var f1 = LMes.Find(a => a.EndAddress == thing.StartAddress && a.Status == "未分配");    //找区域连接上方是否空闲
-                var f2 = LMes.Find(a => a.StartAddress == thing.EndAddress && a.Status == "未分配" );    //区域下方是否空闲
+                var f1 = LMes.Find(a => a.EndAddress + 1 == thing.StartAddress && a.Status == "未分配");    //找区域连接上方是否空闲
+                var f2 = LMes.Find(a => a.StartAddress == thing.EndAddress + 1 && a.Status == "未分配" );    //区域下方是否空闲
 
                 if(f1 != null && f2 != null)
                 {
                     //区域上下都空闲
                     LMes[f1.Id - 1].EndAddress = LMes[f2.Id - 1].EndAddress;
-                    LMes[f1.Id - 1].Length = LMes[f1.Id - 1].EndAddress - LMes[f1.Id - 1].StartAddress;
+                    LMes[f1.Id - 1].Length = LMes[f1.Id - 1].EndAddress - LMes[f1.Id - 1].StartAddress + 1;
                     LMes[f1.Id - 1].WorkId = "空";
                     LMes.Remove(LMes[num - 1]);  //只留最上方空间
                     LMes.Remove(LMes[f2.Id - 2]);
@@ -226,7 +226,7 @@ namespace ConsoleApplication1
                 {
                     //区域上方空闲
                     LMes[f1.Id - 1].EndAddress = LMes[num - 1].EndAddress;
-                    LMes[f1.Id - 1].Length = LMes[f1.Id - 1].EndAddress - LMes[f1.Id - 1].StartAddress;
+                    LMes[f1.Id - 1].Length = LMes[f1.Id - 1].EndAddress - LMes[f1.Id - 1].StartAddress + 1;
                     LMes[f1.Id - 1].WorkId = "空";
                     LMes.Remove(LMes[num - 1]);
                 }
@@ -234,7 +234,7 @@ namespace ConsoleApplication1
                 {
                     //区域下方空闲
                     LMes[f2.Id - 1].StartAddress = LMes[num - 1].StartAddress;
-                    LMes[f2.Id - 1].Length = LMes[f2.Id - 1].EndAddress - LMes[f2.Id - 1].StartAddress;
+                    LMes[f2.Id - 1].Length = LMes[f2.Id - 1].EndAddress - LMes[f2.Id - 1].StartAddress + 1;
                     LMes[f2.Id - 1].WorkId = "空";
                     LMes.Remove(LMes[num - 1]);
                 }
@@ -245,6 +245,7 @@ namespace ConsoleApplication1
                     Nmes.Status = "未分配";
                     Nmes.WorkId = "空";
                 }
+                MemoryMessage.Sort_BO(LMes);
                 ReCode();
             }
             else
